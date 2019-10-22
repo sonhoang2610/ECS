@@ -8,38 +8,68 @@ using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Random = UnityEngine.Random;
 
 public class SpawnEnemy : MonoBehaviour
 {
     private EntityManager manager;
     public GameObject prefab;
-
+    public GameObject prefabTarget;
+    public Vector2 sizeZone;
     public bool tradition = false;
     // Start is called before the first frame update
     void Start()
     {
         manager = World.Active.EntityManager;
-        for (int i = 0; i < 500; ++i)
+        Entity pPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(prefab, World.Active);
+        for (int i = 0; i < 1000; ++i)
         {
-           GameObject pObjet = Instantiate(prefab);
+          // GameObject pObjet = Instantiate(prefab);
            if (!tradition)
            {
-               Entity e = pObjet.GetComponent<GameObjectEntity>().Entity;
-               manager.AddComponent<CopyTransformToGameObject>(e);
+               Entity e = manager.Instantiate(pPrefab);
+            //   manager.AddComponent<CopyTransformToGameObject>(e);
                manager.AddComponent<LocalToWorld>(e);
                manager.AddComponent<Rotation>(e);
                manager.AddComponentData(e,new EzMovement()
                {
                    Speed = 1
                });
-               manager.AddComponentData(e,new HasTargetMove()
-               {
-                   target =  new float3(0,-2,0)
-               });
-               manager.AddComponentData<Translation>(e,new Translation(){Value =  new float3(0,1,0)});
+               manager.SetComponentData(e,new Translation(){Value =  new float3(Random.Range(-sizeZone.x/2,sizeZone.x/2),Random.Range(-sizeZone.y/2,sizeZone.y/2),0)});
            }
   
         }
+
+        SpawnTarget();
+    }
+
+    public void SpawnTarget()
+    {
+        Entity pPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(prefab, World.Active);
+        for (int i = 0; i < 100; ++i)
+        {
+            if (!tradition)
+            {
+                Entity e = manager.Instantiate(pPrefab);
+                manager.AddComponent<CopyTransformToGameObject>(e);
+                manager.AddComponent<LocalToWorld>(e);
+                manager.AddComponentData(e, new EzTarget()
+                {
+                    layer = new EzSingleLayer()
+                    {
+                        layer = 0
+                    }
+                });
+                manager.SetComponentData<Translation>(e,
+                    new Translation()
+                    {
+                        Value = new float3(Random.Range(-sizeZone.x / 2, sizeZone.x / 2),
+                            Random.Range(-sizeZone.y / 2, sizeZone.y / 2), 0)
+                    });
+            }
+        }
+
+        //Invoke(nameof(SpawnTarget),1);
     }
 
     // Update is called once per frame

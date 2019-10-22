@@ -8,13 +8,13 @@ using UnityEngine;
 
 namespace EazyEngine.ECS.System
 {
-    public class MovementToTargetSystem : JobComponentSystem    
+    public class MovementToPosSystem : JobComponentSystem    
     {
         [BurstCompile]
         private struct MoveJob : IJobForEachWithEntity<Translation,HasTargetMove,EzMovement>
         {
             public float deltaTime;
-            public void Execute(Entity entity, int index, ref Translation c0,[Unity.Collections.ReadOnly] ref HasTargetMove pTarget,ref EzMovement pMoveData)
+            public void Execute(Entity entity, int index, ref Translation c0,[Unity.Collections.ReadOnly]ref HasTargetMove pTarget,ref EzMovement pMoveData)
             {
                 c0.Value += math.normalize(pTarget.target - c0.Value)*pMoveData.Speed*deltaTime;
             }

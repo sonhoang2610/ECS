@@ -14,4 +14,8 @@ namespace EazyEngine.ECS.Components
     {
         public float3 target;
     }
+    public struct HasTargetRotation : IComponentData
+    {
+        public float target;
+    }
 }

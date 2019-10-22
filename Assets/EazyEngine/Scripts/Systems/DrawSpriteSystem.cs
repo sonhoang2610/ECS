@@ -24,7 +24,7 @@ namespace EazyEngine.ECS.System
             Entities.WithAll<EzRenderSprite>().WithNone<RenderMesh>().ForEach<EzRenderSprite>((Entity e, EzRenderSprite e1) =>
             {
                 var pMat = e1.mat;
-                pMat.mainTexture = e1.sprite.texture;
+               // pMat.mainTexture = e1.sprite.texture;
                 manager.AddSharedComponentData(e,new RenderMesh()
                 {
                     layer =  0,
