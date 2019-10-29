@@ -203,13 +203,51 @@ namespace EazyEngine.ECS.System
     {
         protected override void OnUpdate()
         {
-            Entities.WithAll<HasTargetMove>().WithAll<EzMoveToTarget>().ForEach((Entity unit, ref EzHasTarget pTarget) =>
+            Entities.WithAll<HasTargetMove>().WithAll<EzMoveToTarget>().ForEach((Entity unit, ref EzHasTarget pTarget,ref HasTargetMove pOld) =>
             {
                 var pTrans =  World.Active.EntityManager.GetComponentData<Translation>(pTarget.target);
-                World.Active.EntityManager.SetComponentData(unit,new HasTargetMove()
+                pOld.target = pTrans.Value;
+            });
+        }
+    }
+
+    public struct MovingAction : IComponentData
+    {
+        
+    }
+    public struct MovingActionState : ISystemStateComponentData
+    {
+        public Entity owner;
+    }
+   [UpdateBefore(typeof(MovementToPosSystem))]
+    public class ReactiveMoveSystemPreUpdate : ComponentSystem
+    {
+        protected override void OnUpdate()
+        {
+            Entities.WithAll<HasTargetMove>().ForEach((Entity e,ref HasTargetMove pTarget) =>
+            {
+                if (   pTarget.eventHandle == Entity.Null)
                 {
-                    target = pTrans.Value
-                });
+                    pTarget.eventHandle = World.Active.EntityManager.CreateEntity(typeof(MovingAction),typeof(MovingActionState));
+                     World.Active.EntityManager.SetComponentData(  pTarget.eventHandle ,new MovingActionState()
+                     {
+                         owner = e
+                     });
+                    Debug.Log("start");
+                }
+            });
+        }
+    }
+    [UpdateAfter(typeof(MovementToPosSystem))]
+    public class ReactiveMoveSystemLateUpdate : ComponentSystem
+    {
+        protected override void OnUpdate()
+        {
+            Entities.WithAll<MovingActionState>().WithNone<MovingAction>().ForEach((Entity e, ref MovingActionState pTarget) =>
+            {
+                  Debug.Log(pTarget.owner.Index + "end");
+                PostUpdateCommands.RemoveComponent<MovingActionState>(e);
+          
             });
         }
     }

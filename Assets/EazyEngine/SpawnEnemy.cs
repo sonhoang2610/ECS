@@ -22,7 +22,7 @@ public class SpawnEnemy : MonoBehaviour
     {
         manager = World.Active.EntityManager;
         Entity pPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(prefab, World.Active);
-        for (int i = 0; i < 1000; ++i)
+        for (int i = 0; i < 1; ++i)
         {
           // GameObject pObjet = Instantiate(prefab);
            if (!tradition)
@@ -46,7 +46,7 @@ public class SpawnEnemy : MonoBehaviour
     public void SpawnTarget()
     {
         Entity pPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(prefab, World.Active);
-        for (int i = 0; i < 100; ++i)
+        for (int i = 0; i < 1; ++i)
         {
             if (!tradition)
             {

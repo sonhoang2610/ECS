@@ -13,6 +13,7 @@ namespace EazyEngine.ECS.Components
     public struct HasTargetMove : IComponentData
     {
         public float3 target;
+        public Entity eventHandle;
     }
     public struct HasTargetRotation : IComponentData
     {
